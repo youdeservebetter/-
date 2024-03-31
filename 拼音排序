@@ -1,0 +1,31 @@
+import re
+from pypinyin import lazy_pinyin
+
+def remove_brackets_at_start(text):
+    # 使用正则表达式移除位于文本开始处的括号及其内容
+    # 这里假设括号在最前面，并可能后跟一些空格，然后是文本的其余部分
+    return re.sub(r'^\(.*?\)\s*', '', text)
+
+def get_sort_key(text):
+    # 如果文本是中文，则转换为拼音，否则直接返回文本
+    if re.search('[\u4e00-\u9fff]', text):
+        return ''.join(lazy_pinyin(text))
+    else:
+        return text
+
+def sort_references(references):
+    # 首先移除每个参考文献中位于开始处的括号及其内容
+    sorted_references = sorted(references, key=lambda x: get_sort_key(remove_brackets_at_start(x)))
+    return sorted_references
+
+# 示例参考文献，包含中文和英文，且可能包含位于最前面的括号
+references = [
+"apple",
+"banana",
+]
+
+# 排序
+sorted_references = sort_references(references)
+print("排序后的参考文献：")
+for ref in sorted_references:
+    print(ref)
